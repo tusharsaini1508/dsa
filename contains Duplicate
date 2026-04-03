@@ -1,0 +1,81 @@
+Start
+  ↓
+Empty set (seen = {})
+  ↓
+Pick each number one by one
+  ↓
+Already in set?
+  ├── YES → return True  (duplicate found, stop)
+  └── NO  → add to set, continue
+  ↓
+Loop done → return False  (no duplicate found)
+
+
+class Solution:                            # Line 1
+    def containsDuplicate(self, nums: list[int]) -> bool:   # Line 2
+        seen = set()                       # Line 3
+
+        for num in nums:                   # Line 4
+            if num in seen:                # Line 5
+                return True               # Line 6
+            seen.add(num)                  # Line 7
+
+        return False                       # Line 8
+```
+
+---
+
+**Line 1 — `class Solution:`**
+Creates a class called `Solution`. LeetCode requires your code to be inside this class. Think of it as a container/box that holds your function.
+
+---
+
+**Line 2 — `def containsDuplicate(self, nums: list[int]) -> bool:`**
+Defines the function. Breaking it down:
+- `def` → means "I am creating a function"
+- `containsDuplicate` → name of the function
+- `self` → refers to the class itself (required in every class method)
+- `nums: list[int]` → input is a list of integers e.g. `[1, 2, 3]`
+- `-> bool` → this function will return either `True` or `False`
+
+---
+
+**Line 3 — `seen = set()`**
+Creates an empty set. A set is like a bag that only holds unique values. This is your memory — you'll store every number you visit here.
+```
+seen = {}  →  empty at start
+```
+
+---
+
+**Line 4 — `for num in nums:`**
+Loop through every number in the list one by one. Each time the loop runs, `num` holds the current number.
+```
+nums = [1, 2, 3, 1]
+round 1 → num = 1
+round 2 → num = 2
+round 3 → num = 3
+round 4 → num = 1
+```
+
+---
+
+**Line 5 — `if num in seen:`**
+Checks — "have I seen this number before?" Python checks the set instantly in O(1) time. If the number is already in the set, it's a duplicate.
+```
+seen = {1, 2, 3}  and  num = 1
+→ 1 is in seen → YES → go to line 6
+```
+
+---
+
+**Line 6 — `return True`**
+Duplicate found — stop everything and return `True`. The function ends here immediately, no need to check the rest of the list.
+
+---
+
+**Line 7 — `seen.add(num)`**
+First time seeing this number — add it to the set so you remember it. Next time this number appears, line 5 will catch it.
+```
+seen = {}   →  add 1  →  seen = {1}
+seen = {1}  →  add 2  →  seen = {1, 2}
