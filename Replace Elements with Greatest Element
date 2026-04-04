@@ -1,11 +1,13 @@
 class Solution:
     def replaceElements(self, arr: list[int]) -> list[int]:
-        max_so_far = -1                             
-        for i in range(len(arr) - 1, -1, -1):      
-            new_max = max(max_so_far, arr[i])        
-            arr[i] = max_so_far                     
-            max_so_far = new_max                    
-        return arr  
+        max_so_far = -1                          # last element is always -1
+
+        for i in range(len(arr) - 1, -1, -1):   # loop RIGHT to LEFT
+            new_max = max(max_so_far, arr[i])    # save current max before overwriting
+            arr[i] = max_so_far                  # replace current with max to its right
+            max_so_far = new_max                 # update max for next iteration
+
+        return arr
 
 
     #     class Solution:
@@ -19,3 +21,6 @@ class Solution:
     #             greatestRight = current
                 
     #     return arr
+
+
+
