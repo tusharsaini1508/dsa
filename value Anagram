@@ -344,3 +344,50 @@ Note: the order of keys inside the dictionary does not matter — Python compare
 
 One-line summary
 count_s == count_t returns True only when both dictionaries have the exact same keys with the exact same values. In "rat" vs "car", 't' exists in count_s but not in count_t, and 'c' exists in count_t but not in count_s — so the result is False.
+
+
+
+
+
+2nd time ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# class Solution:
+#     def isAnagram(self, s: str, t: str) -> bool:
+#         count_s={}
+#         count_t={}
+#         if len(s)!=len(t):
+#             return False
+#         for char in s :
+#             count_s[char]=count_s.get(char,0)+1
+#         for char in t :
+#             count_t[char]=count_t.get(char,0)+1 # check every element and give that +1 one number then compare that number is the same in other array also or not 
+#         return count_s==count_t
+
+
+class Solution:
+    def isAnagram(self, s: str, t: str) -> bool:
+
+        # Different lengths = can never be anagram, exit early
+        if len(s) != len(t):
+            return False                  # ← was 'false' (wrong!) now 'False' ✅
+
+        # Two empty scoreboards
+        count_s = {}
+        count_t = {}
+
+        # Count every letter in s
+        # Example: "rat" → {'r':1, 'a':1, 't':1}
+        for char in s:
+            count_s[char] = count_s.get(char, 0) + 1
+
+        # Count every letter in t
+        # Example: "car" → {'c':1, 'a':1, 'r':1}
+        for char in t:
+            count_t[char] = count_t.get(char, 0) + 1
+
+        # If both scoreboards are identical → anagram
+        # {'r':1,'a':1,'t':1} == {'c':1,'a':1,'r':1} → False ❌
+        return count_s == count_t
+
+
