@@ -1,0 +1,96 @@
+class Solution:
+    def longestCommonPrefix(self, strs: list[str]) -> str:
+
+        # ─────────────────────────────────────────────
+        # STEP 1: Start by assuming the ENTIRE first
+        # word is the common prefix.
+        # We will shrink it down as we compare words.
+        #
+        # Example: strs = ["flower", "flow", "flight"]
+        # prefix = "flower"  ← start here
+        # ─────────────────────────────────────────────
+        prefix = strs[0]
+
+
+        # ─────────────────────────────────────────────
+        # STEP 2: Loop through every word EXCEPT the
+        # first one (since we already used it as prefix)
+        #
+        # strs[1:]  means  ["flow", "flight"]
+        #           skips  "flower" (index 0)
+        # ─────────────────────────────────────────────
+        for word in strs[1:]:
+
+
+            # ─────────────────────────────────────────
+            # STEP 3: Check if the current word STARTS
+            # WITH our current prefix.
+            #
+            # .startswith() is a built-in Python method.
+            # It returns True or False.
+            #
+            # "not word.startswith(prefix)" means:
+            # → "Does this word NOT begin with prefix?"
+            # → If YES (doesn't match) → shrink prefix
+            # → If NO  (matches)       → move to next word
+            #
+            # This is a WHILE loop, not IF —
+            # it keeps shrinking until prefix fits.
+            #
+            # Example:
+            # word   = "flow"
+            # prefix = "flower" → "flow".startswith("flower")? NO  → shrink
+            # prefix = "flowe"  → "flow".startswith("flowe")?  NO  → shrink
+            # prefix = "flow"   → "flow".startswith("flow")?   YES → stop
+            # ─────────────────────────────────────────
+            while not word.startswith(prefix):
+
+
+                # ─────────────────────────────────────
+                # STEP 4: Chop the LAST character off
+                # the prefix.
+                #
+                # prefix[:-1] means "everything except
+                # the last character"
+                #
+                # "flower" → "flowe"
+                # "flowe"  → "flow"
+                # "flow"   → "flo"
+                # "flo"    → "fl"
+                # "fl"     → "f"
+                # "f"      → ""
+                # ─────────────────────────────────────
+                prefix = prefix[:-1]
+
+
+                # ─────────────────────────────────────
+                # STEP 5: After chopping, check if the
+                # prefix has become EMPTY ("").
+                #
+                # "if not prefix" is True when prefix == ""
+                #
+                # Empty prefix means the words share
+                # ZERO common characters at the start.
+                # No point continuing — return "" immediately.
+                #
+                # Example that hits this:
+                # strs = ["dog", "car", "racecar"]
+                # → "dog" and "car" share nothing
+                # → prefix shrinks to "" → return ""
+                # ─────────────────────────────────────
+                if not prefix:
+                    return ""   # ← EXIT EARLY, no common prefix
+
+
+        # ─────────────────────────────────────────────
+        # STEP 6: We finished the loop successfully!
+        # Every word was checked and every word starts
+        # with whatever is left in prefix.
+        #
+        # Return it as the final answer.
+        #
+        # Example: strs = ["flower", "flow", "flight"]
+        # After all comparisons → prefix = "fl"
+        # → return "fl" ✅
+        # ─────────────────────────────────────────────
+        return prefix
