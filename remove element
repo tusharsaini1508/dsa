@@ -1,0 +1,124 @@
+class Solution:
+    def removeElement(self, nums: list[int], val: int) -> int:
+
+        k = 0                          # Line 1
+
+        for i in range(len(nums)):     # Line 2
+            if nums[i] != val:         # Line 3
+                nums[k] = nums[i]      # Line 4
+                k += 1                 # Line 5
+
+        return k                       # Line 6
+```
+
+---
+
+### Every Single Line Explained
+
+---
+
+**Line 1 — `k = 0`**
+
+`k` is your **write pointer**. Think of it as a slow pointer that only moves forward when it finds a good element (not equal to `val`). It also tracks the count of valid elements.
+```
+k = 0  ← start writing from position 0
+```
+
+---
+
+**Line 2 — `for i in range(len(nums)):`**
+
+`i` is your **read pointer**. It visits every single element in the array one by one from left to right. It never skips anything.
+```
+nums = [3, 2, 2, 3]
+i visits: 0, 1, 2, 3   ← every index
+```
+
+---
+
+**Line 3 — `if nums[i] != val:`**
+
+This is the CHECK. We look at the current element. Is it the value we want to remove?
+```
+val = 3
+
+nums[0] = 3  →  3 != 3  →  False  ← skip it, it's bad
+nums[1] = 2  →  2 != 3  →  True   ← keep it, it's good
+```
+
+---
+
+**Line 4 — `nums[k] = nums[i]`**
+
+Only runs when the element is GOOD (not equal to `val`). We copy the good element to position `k`.
+```
+nums[i] = 2  (good element)
+nums[k] = 2  (write it to the front)
+```
+
+---
+
+**Line 5 — `k += 1`**
+
+Move the write pointer forward. Now ready to write the next good element.
+```
+Before: k = 0
+After:  k = 1
+```
+
+---
+
+**Line 6 — `return k`**
+
+`k` is exactly the count of elements that are NOT equal to `val`. Return it.
+
+---
+
+### Full Trace — `nums = [3, 2, 2, 3]`, `val = 3`
+```
+k = 0
+nums = [3, 2, 2, 3]
+```
+```
+i=0 → nums[0]=3 → 3 != 3? NO  ← skip
+  k stays at 0
+  nums = [3, 2, 2, 3]
+```
+```
+i=1 → nums[1]=2 → 2 != 3? YES ← keep
+  nums[0] = 2   (write 2 at position k=0)
+  k = 1
+  nums = [2, 2, 2, 3]
+```
+```
+i=2 → nums[2]=2 → 2 != 3? YES ← keep
+  nums[1] = 2   (write 2 at position k=1)
+  k = 2
+  nums = [2, 2, 2, 3]
+```
+```
+i=3 → nums[3]=3 → 3 != 3? NO  ← skip
+  k stays at 2
+  nums = [2, 2, 2, 3]
+```
+```
+return k = 2 ✅
+
+First 2 elements: [2, 2]  ← these are the valid ones
+```
+
+---
+
+### Second Trace — `nums = [0,1,2,2,3,0,4,2]`, `val = 2`
+```
+k=0  i=0 → 0 != 2? YES → nums[0]=0  k=1
+k=1  i=1 → 1 != 2? YES → nums[1]=1  k=2
+k=2  i=2 → 2 != 2? NO  → skip
+k=2  i=3 → 2 != 2? NO  → skip
+k=2  i=4 → 3 != 2? YES → nums[2]=3  k=3
+k=3  i=5 → 0 != 2? YES → nums[3]=0  k=4
+k=4  i=6 → 4 != 2? YES → nums[4]=4  k=5
+k=5  i=7 → 2 != 2? NO  → skip
+
+return k = 5 ✅
+nums = [0, 1, 3, 0, 4, _, _, _]
