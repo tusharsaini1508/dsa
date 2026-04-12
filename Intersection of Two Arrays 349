@@ -1,0 +1,6 @@
+  # Step 1: Convert both to sets → removes duplicates
+        set1 = set(nums1)
+        set2 = set(nums2)
+
+        # Step 2: & operator finds common elements in both sets
+        return list(set1 & set2)    
