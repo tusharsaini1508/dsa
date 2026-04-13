@@ -1,0 +1,96 @@
+Solution 1 — Using a Set (Easiest)
+pythonclass Solution:
+    def missingNumber(self, nums: list[int]) -> int:
+
+        num_set = set(nums)              # put all numbers in a set
+
+        for i in range(len(nums) + 1):  # check 0, 1, 2 ... n
+            if i not in num_set:        # if i is missing
+                return i                # that is the answer
+```
+
+**Trace for `[3, 0, 1]`:**
+```
+num_set = {0, 1, 3}
+n = 3, so check 0, 1, 2, 3
+
+i=0 → 0 in set? YES → skip
+i=1 → 1 in set? YES → skip
+i=2 → 2 in set? NO  → return 2 ✅
+TimeSpaceO(n)O(n) — extra set
+
+Solution 2 — Sorting
+pythonclass Solution:
+    def missingNumber(self, nums: list[int]) -> int:
+
+        nums.sort()
+
+        for i in range(len(nums)):
+            if nums[i] != i:     # number at position i should BE i
+                return i
+
+        return len(nums)         # if all match, last number n is missing
+```
+
+**Trace for `[3, 0, 1]`:**
+```
+sorted → [0, 1, 3]
+
+i=0 → nums[0]=0 == 0 ✅
+i=1 → nums[1]=1 == 1 ✅
+i=2 → nums[2]=3 != 2 ❌ → return 2 ✅
+TimeSpaceO(n log n)O(1)
+
+Solution 3 — Gauss Sum Formula (Most Elegant)
+This is the smartest and most efficient solution. Based on a simple math trick.
+
+The sum of numbers from 0 to n is always n * (n+1) / 2.
+Subtract the actual sum of the array from the expected sum.
+The difference is the missing number.
+
+pythonclass Solution:
+    def missingNumber(self, nums: list[int]) -> int:
+
+        n = len(nums)
+        expected = n * (n + 1) // 2    # sum of 0..n
+        actual   = sum(nums)            # sum of what we have
+
+        return expected - actual        # difference = missing number
+```
+
+**Why does this work?**
+```
+nums = [3, 0, 1]   →   n = 3
+
+expected = 3 * 4 / 2 = 6   (0+1+2+3 = 6)
+actual   = 3 + 0 + 1 = 4
+
+missing  = 6 - 4 = 2 ✅
+It is like saying: "I know the total should be 6. I only have 4. The missing piece is 2."
+TimeSpaceO(n)O(1) — best possible!
+
+Solution 4 — XOR Trick (Bonus — Interview Favourite)
+Every number XOR'd with itself = 0. So if we XOR all numbers 0..n with all numbers in the array, everything cancels out except the missing number.
+pythonclass Solution:
+    def missingNumber(self, nums: list[int]) -> int:
+
+        result = len(nums)             # start with n
+
+        for i in range(len(nums)):
+            result ^= i ^ nums[i]     # XOR index and value together
+
+        return result
+```
+
+**Why it works:**
+```
+nums = [3, 0, 1],  n = 3
+
+result = 3
+i=0: result = 3 ^ 0 ^ 3 = 0
+i=1: result = 0 ^ 1 ^ 0 = 1
+i=2: result = 1 ^ 2 ^ 1 = 2
+
+return 2 ✅
+Everything cancels in pairs. Only the missing number has no pair to cancel with.
+TimeSpaceO(n)O(1)
