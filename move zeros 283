@@ -1,0 +1,17 @@
+class Solution:
+    def moveZeroes(self, nums: list[int]) -> None:
+
+        k = 0  # k = writer position
+               # it only moves forward when we find a non-zero
+
+        for i in range(len(nums)):   # i scans every element
+
+            if nums[i] != 0:         # found a non-zero number?
+                nums[k] = nums[i]    # write it at position k
+                k += 1               # move writer forward
+
+        # at this point all non-zeros are at the front
+        # now fill remaining positions with 0
+        while k < len(nums):
+            nums[k] = 0   # fill with zero
+            k += 1        # move forward
