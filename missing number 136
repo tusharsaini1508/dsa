@@ -1,0 +1,47 @@
+class Solution:
+    def singleNumber(self, nums: List[int]) -> int:
+     store=[]   
+     step=0  
+     for i in nums:
+        if i not in store :
+            store.append(i)
+            step+=1
+        else:
+            store.remove(i)
+            step+=1
+     return store[0]           
+
+
+
+     class Solution:
+    def singleNumber(self, nums: list[int]) -> int:
+
+        # Step 1: Count every number
+        count = {}
+        for num in nums:
+            count[num] = count.get(num, 0) + 1
+
+        # Step 2: Find the one with count = 1
+        for num, freq in count.items():
+            if freq == 1:
+                return num
+
+
+
+
+
+
+
+
+                class Solution:
+    def singleNumber(self, nums: list[int]) -> int:
+
+        seen = set()
+
+        for num in nums:
+            if num in seen:
+                seen.remove(num)   # seen twice → remove it
+            else:
+                seen.add(num)      # seen first time → add it
+
+        return seen.pop()          # only one left = the answer
