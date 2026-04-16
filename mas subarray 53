@@ -1,0 +1,27 @@
+from typing import List
+# kadanes algo
+class Solution:
+    def maxSubArray(self, nums: List[int]) -> int:
+        # Start with the smallest possible number so any real sum is bigger
+        maxsum = float('-inf')
+        
+        # This will hold the sum of the current subarray we are building
+        s = 0
+        
+        # Go through each number in the list one by one
+        for i in nums:
+            # Add the current number to our running sum
+            s += i
+            
+            # If this running sum is the best we've seen so far, remember it
+            if s > maxsum:
+                maxsum = s
+            
+            # If the running sum becomes negative, it's useless for future numbers.
+            # Because adding a negative number will only make the next sum smaller.
+            # So we reset it to 0 and start a fresh subarray from the next number.
+            if s < 0:
+                s = 0
+        
+        # After checking all numbers, maxsum holds the largest sum of any contiguous block
+        return maxsum
