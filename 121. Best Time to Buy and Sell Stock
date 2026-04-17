@@ -1,0 +1,11 @@
+def maxProfit(prices: list[int]) -> int:
+    min_price = float('inf')   # lowest buy price seen so far
+    max_profit = 0             # best profit seen so far
+
+    for price in prices:
+        if price < min_price:
+            min_price = price          # found a cheaper buy day
+        elif price - min_price > max_profit:
+            max_profit = price - min_price  # found a better sell day
+
+    return max_profit
