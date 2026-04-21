@@ -1,0 +1,26 @@
+class Solution:
+    def isPalindrome(self, s: str) -> bool:
+
+        left  = 0
+        right = len(s) - 1
+
+        while left < right:
+
+            # skip non-alphanumeric from the LEFT
+            while left < right and not s[left].isalnum():
+                left += 1
+
+            # skip non-alphanumeric from the RIGHT
+            while left < right and not s[right].isalnum():
+                right -= 1
+
+            # now both pointers are on alphanumeric characters
+            # compare them (lowercase both to ignore case)
+            if s[left].lower() != s[right].lower():
+                return False    # mismatch → not a palindrome
+
+            # move both pointers inward
+            left  += 1
+            right -= 1
+
+        return True   # all characters matched ✓
