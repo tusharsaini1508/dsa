@@ -1,0 +1,14 @@
+class Solution:
+    def merge(self, nums1: List[int], m: int, nums2: List[int], n: int) -> None:
+        i = m - 1  # i is range where we need to go its on index which is m=3 is len m=3-1=indexing for the i 
+        j = n - 1  # j is range where we need to go its on index which is m=3 is len m=3-1=indexing for the j 
+        k = m + n - 1  # final output index k m=3, n = 3 3+3=6-1=5 index for final 
+
+        while j >= 0: #until j greater then 0 it will stop when zero will come 
+            if i >= 0 and nums1[i] > nums2[j]:
+                nums1[k] = nums1[i]
+                i -= 1
+            else:
+                nums1[k] = nums2[j]
+                j -= 1
+            k -= 1
