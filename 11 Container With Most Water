@@ -1,0 +1,160 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║         LC 11 — Container With Most Water                   ║
+# ║         Hindi + English Comments — Line by Line             ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+from typing import List
+
+class Solution:
+    def maxArea(self, height: List[int]) -> int:
+
+        # Do pointer banao — ek left side par, ek right side par
+        # Two pointers — one at start, one at end
+        left  = 0
+        right = len(height) - 1
+
+        # Ab tak ka sabse bada area track karo
+        # Track the maximum water found so far
+        max_water = 0
+
+        # Jab tak left aur right milein nahi, loop chalao
+        # Keep looping until both pointers meet
+        while left < right:
+
+            # ── Area Calculate Karo ──────────────────────────────
+            
+            # Dono pointers ke beech ki doori = width
+            # Distance between left and right = width of container
+            width = right - left
+
+            # Choti wall tak hi paani bhar sakta hai
+            # Water can only fill up to the SHORTER wall
+            current_height = min(height[left], height[right])
+
+            # Area = choti height × width
+            # Area = shorter height × width
+            area = current_height * width
+
+            # Agar yeh area abhi tak ke sabse bade se bada hai, update karo
+            # Update max_water if current area is the biggest so far
+            max_water = max(max_water, area)
+
+            # ── Pointer Move Karo ────────────────────────────────
+
+            # Choti wall ko andar move karo — kyun?
+            # Move the SHORTER wall inward — why?
+            #
+            # Socho: agar hum badi wall ko move karein →
+            # Think: if we move the TALLER wall inward →
+            #   width   → kam ho jaayegi (shrinks)
+            #   height  → abhi bhi choti wall se bounded rahegi (still limited by short wall)
+            #   area    → definitely kam ho jaayega (area can only get worse)
+            #
+            # Isliye choti wall ko move karna hi ek ummeed deta hai
+            # So moving the SHORTER wall is the ONLY chance to find bigger area
+
+            if height[left] < height[right]:
+                # Left wall choti hai → left ko aage badhao
+                # Left wall is shorter → move left pointer right
+                left += 1
+
+            elif height[right] < height[left]:
+                # Right wall choti hai → right ko peeche laao
+                # Right wall is shorter → move right pointer left
+                right -= 1
+
+            else:
+                # Dono wall barabar hain → koi bhi move karo (same result)
+                # Both walls are equal height → move either one (same result)
+                left += 1
+
+        # Sabse bada area return karo
+        # Return the maximum water found
+        return max_water
+
+
+# ══════════════════════════════════════════════════════════════
+#  DRY RUN  →  height = [1, 8, 6, 2, 5, 4, 8, 3, 7]  target = max area
+# ══════════════════════════════════════════════════════════════
+#
+#  L  R  |  h[L]  h[R]  |  width  |  height  |  area  |  move
+#  ───────────────────────────────────────────────────────────
+#  0  8  |   1     7    |    8    |  min=1   |    8   |  L++ (1 < 7)
+#  1  8  |   8     7    |    7    |  min=7   |   49   |  R-- (8 > 7)
+#  1  7  |   8     3    |    6    |  min=3   |   18   |  R-- (8 > 3)
+#  1  6  |   8     8    |    5    |  min=8   |   40   |  L++ (equal)
+#  2  6  |   6     8    |    4    |  min=6   |   24   |  L++ (6 < 8)
+#  3  6  |   2     8    |    3    |  min=2   |    6   |  L++ (2 < 8)
+#  4  6  |   5     8    |    2    |  min=5   |   10   |  L++ (5 < 8)
+#  5  6  |   4     8    |    1    |  min=4   |    4   |  L++ (4 < 8)
+#  L >= R → loop khatam / loop ends
+#
+#  Answer = 49  ✓
+# ══════════════════════════════════════════════════════════════
+
+
+# ══════════════════════════════════════════════════════════════
+#  COMPLEXITY — Time & Space
+# ══════════════════════════════════════════════════════════════
+#
+#  Time  → O(n)   Ek hi baar array traverse karta hai
+#                  Single pass through the array
+#
+#  Space → O(1)   Sirf 3 variables use kiye (left, right, max_water)
+#                  Only 3 variables used — no extra memory
+# ══════════════════════════════════════════════════════════════
+
+
+# ══════════════════════════════════════════════════════════════
+#  PROOF — Choti wall kyun move karein? (Why always move shorter?)
+# ══════════════════════════════════════════════════════════════
+#
+#  Maan lo  height[left] < height[right]  hai
+#  Suppose  height[left] < height[right]
+#
+#  Agar hum left ko fix rakhein aur right ko move karein:
+#  If we keep left fixed and move right inward:
+#
+#    → width   ZAROOR kam hogi  (right andar aa gaya)
+#       width   DEFINITELY decreases (right moved inward)
+#
+#    → height  MAXIMUM height[left] hi rahegi  (choti side = ceiling)
+#       height  is still CAPPED at height[left] (shorter side = ceiling)
+#
+#    → area    ZAROOR kam ya barabar hogi — kabhi zyada nahi
+#       area   can NEVER increase — only decrease or stay same
+#
+#  Isliye left ko move karna hi sensible hai
+#  Therefore moving left is the only logical choice
+# ══════════════════════════════════════════════════════════════
+
+
+# ══════════════════════════════════════════════════════════════
+#  COMMON GALTIYAN (Common Mistakes)
+# ══════════════════════════════════════════════════════════════
+#
+#  GALAT 1 — Badi wall move karna
+#  WRONG 1 — Moving the taller wall
+#
+#      if height[left] > height[right]:
+#          left += 1          ← GALAT! Badi wall move ki, choti nahi
+#                               WRONG! Moved the taller wall
+#
+#  ─────────────────────────────────────────────────────────────
+#
+#  GALAT 2 — Max height use karna, min nahi
+#  WRONG 2 — Using max height instead of min
+#
+#      area = max(height[left], height[right]) * width   ← GALAT!
+#      area = min(height[left], height[right]) * width   ← SAHI!
+#
+#  ─────────────────────────────────────────────────────────────
+#
+#  GALAT 3 — Loop condition mein <= use karna
+#  WRONG 3 — Using <= in loop condition
+#
+#      while left <= right:   ← GALAT! Jab left==right ek hi element hai
+#                               WRONG! When left==right it's same element
+#      while left < right:    ← SAHI! Pair chahiye, ek element nahi
+#                               RIGHT!  We need a pair, not one element
+# ══════════════════════════════════════════════════════════════
