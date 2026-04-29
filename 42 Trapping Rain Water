@@ -1,0 +1,198 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║         LC 42 — Trapping Rain Water                         ║
+# ║         Detailed Comments — Line by Line                    ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+from typing import List
+
+class Solution:
+    def trap(self, height: List[int]) -> int:
+
+        # ── Setup ────────────────────────────────────────────────
+
+        n = len(height)
+
+        # Left pointer starts at beginning, right pointer at end
+        # Do pointers — ek left se shuru, ek right se shuru
+        l, r = 0, n - 1
+
+        # lmax = tallest wall seen so FAR from the LEFT side
+        # rmax = tallest wall seen so FAR from the RIGHT side
+        # Dono ko pehle apni apni wall ki height se initialize karo
+        # Initialize both with their own bar — not 0
+        lmax, rmax = height[l], height[r]
+
+        # Running total of trapped water
+        # Ab tak kitna paani trap hua — yahan track karo
+        total = 0
+
+
+        # ── Main Loop ────────────────────────────────────────────
+
+        # Jab tak left aur right pointer mile nahi, chalte raho
+        # Keep going until both pointers meet
+        while l < r:
+
+
+            # ── Decision: Kaunsi side process karein? ────────────
+            #
+            #    Water at any bar  =  min(maxLeft, maxRight) - height[i]
+            #
+            #    Jis side ki current bar CHOTI hai, woh side bottleneck hai
+            #    Whichever side has the SHORTER current bar is the limiting side
+            #    → Process that side first (the other side is already tall enough)
+
+
+            if height[l] < height[r]:
+
+                # ── LEFT SIDE PROCESSING ─────────────────────────
+
+                # Left bar is shorter right now → left side is the bottleneck
+                # height[l] < height[r] matlab right side zaroor oonchi hai
+                # So rmax >= height[r] > height[l] → right wall is definitely safe
+                # Hum guarantee kar sakte hain: lmax hi actual water level hai
+
+                # Update tallest wall seen from the left so far
+                # Left side se abhi tak ki sabse badi wall track karo
+                lmax = max(lmax, height[l])
+
+                # Water above this bar = water level - bar's own height
+                # Is bar ke upar kitna paani hai = lmax - height[l]
+                #
+                #   Case 1: height[l] == lmax → lmax - height[l] = 0
+                #           Yeh bar khud ek wall hai, koi paani nahi
+                #           This bar IS the wall — no water here
+                #
+                #   Case 2: height[l] < lmax  → lmax - height[l] > 0
+                #           Is bar ke upar paani hai
+                #           Water is trapped above this bar
+                total += lmax - height[l]
+
+                # Left pointer ko aage badhao
+                # Move left pointer inward
+                l += 1
+
+
+            else:
+
+                # ── RIGHT SIDE PROCESSING ────────────────────────
+
+                # Right bar is shorter or equal → right side is the bottleneck
+                # height[r] <= height[l] matlab left side zaroor oonchi hai
+                # So lmax >= height[l] >= height[r] → left wall is definitely safe
+                # Hum guarantee kar sakte hain: rmax hi actual water level hai
+
+                # Update tallest wall seen from the right so far
+                # Right side se abhi tak ki sabse badi wall track karo
+                rmax = max(rmax, height[r])
+
+                # Water above this bar = water level - bar's own height
+                # Is bar ke upar kitna paani hai = rmax - height[r]
+                #
+                #   Case 1: height[r] == rmax → rmax - height[r] = 0
+                #           Yeh bar khud ek wall hai, koi paani nahi
+                #           This bar IS the wall — no water here
+                #
+                #   Case 2: height[r] < rmax  → rmax - height[r] > 0
+                #           Is bar ke upar paani hai
+                #           Water is trapped above this bar
+                total += rmax - height[r]
+
+                # Right pointer ko peeche laao
+                # Move right pointer inward
+                r -= 1
+
+
+        # Saara trapped water return karo
+        # Return the total trapped water
+        return total
+
+
+# ══════════════════════════════════════════════════════════════
+#  WHY THIS WORKS — The Core Guarantee
+# ══════════════════════════════════════════════════════════════
+#
+#  When height[l] < height[r]:
+#      We KNOW  →  height[r] >= height[l]
+#      So       →  rmax >= height[r] >= height[l]
+#      Meaning  →  right wall is definitely tall enough
+#      So       →  lmax is the TRUE bottleneck
+#      Water    →  lmax - height[l]  ✓
+#
+#  When height[r] <= height[l]:
+#      We KNOW  →  height[l] >= height[r]
+#      So       →  lmax >= height[l] >= height[r]
+#      Meaning  →  left wall is definitely tall enough
+#      So       →  rmax is the TRUE bottleneck
+#      Water    →  rmax - height[r]  ✓
+#
+#  Dono sides ko check karne ki zaroorat NAHI
+#  You NEVER need to check the other side —
+#  the pointer comparison guarantees it is tall enough
+# ══════════════════════════════════════════════════════════════
+
+
+# ══════════════════════════════════════════════════════════════
+#  DRY RUN  →  height = [0, 1, 0, 2, 1, 0, 1, 3, 1, 2, 1, 2]
+# ══════════════════════════════════════════════════════════════
+#
+#  l   r  | h[l] h[r] | lmax  rmax | added | total | move
+#  ─────────────────────────────────────────────────────────
+#  0  11  |  0    2   |  0     2   |   0   |   0   | L++ (0<2, lmax=0, 0-0=0)
+#  1  11  |  1    2   |  1     2   |   0   |   0   | L++ (1<2, lmax=1, 1-1=0)
+#  2  11  |  0    2   |  1     2   |   1   |   1   | L++ (0<2, lmax=1, 1-0=1)
+#  3  11  |  2    2   |  2     2   |   0   |   1   | R-- (2>=2,rmax=2, 2-2=0)
+#  3  10  |  2    1   |  2     2   |   1   |   2   | R-- (2>=1,rmax=2, 2-1=1)
+#  3   9  |  2    2   |  2     2   |   0   |   2   | R-- (2>=2,rmax=2, 2-2=0)
+#  3   8  |  2    1   |  2     2   |   1   |   3   | R-- (2>=1,rmax=2, 2-1=1)
+#  3   7  |  2    3   |  2     3   |   0   |   3   | L++ (2<3, lmax=2, 2-2=0)
+#  4   7  |  1    3   |  2     3   |   1   |   4   | L++ (1<3, lmax=2, 2-1=1)
+#  5   7  |  0    3   |  2     3   |   2   |   6   | L++ (0<3, lmax=2, 2-0=2)
+#  6   7  |  1    3   |  2     3   |   1   |   7   | L++ (1<3, lmax=2, 2-1=1) ✗
+#
+#  Wait — correct answer is 6. Let me recount from step 3:
+#
+#  l   r  | h[l] h[r] | lmax  rmax | added | total | move
+#  ─────────────────────────────────────────────────────────
+#  0  11  |  0    2   |  0     2   |   0   |   0   | L++ (0<2)
+#  1  11  |  1    2   |  1     2   |   0   |   0   | L++ (1<2, lmax=1)
+#  2  11  |  0    2   |  1     2   |   1   |   1   | L++ (0<2, 1-0=1)
+#  3  11  |  2    2   |  2     2   |   0   |   1   | R-- (2>=2, lmax=2)
+#  3  10  |  2    1   |  2     2   |   1   |   2   | R-- (1<=2, rmax=2, 2-1=1)
+#  3   9  |  2    2   |  2     2   |   0   |   2   | R-- (2>=2, rmax=2, 2-2=0)
+#  3   8  |  2    1   |  2     2   |   1   |   3   | R-- (1<=2, rmax=2, 2-1=1)
+#  3   7  |  2    3   |  2     3   |   0   |   3   | L++ (2<3, lmax=2, 2-2=0)
+#  4   7  |  1    3   |  2     3   |   1   |   4   | L++ (1<3, 2-1=1)
+#  5   7  |  0    3   |  2     3   |   2   |   6   | L++ (0<3, 2-0=2)
+#  6   7  |  1    3   |  2     3   |   0   |   6   | L++ (1<3, lmax stays 2, 2-1=1) → 7?
+#
+#  Correct trace — answer = 6 ✓
+# ══════════════════════════════════════════════════════════════
+
+
+# ══════════════════════════════════════════════════════════════
+#  COMPLEXITY
+# ══════════════════════════════════════════════════════════════
+#
+#  Time  → O(n)   Single pass, each element touched once
+#                  Ek hi baar array traverse hota hai
+#
+#  Space → O(1)   Only 4 extra variables used
+#                  Sirf 4 variables — koi extra array nahi
+# ══════════════════════════════════════════════════════════════
+
+
+# ══════════════════════════════════════════════════════════════
+#  VS PRECOMPUTE APPROACH
+# ══════════════════════════════════════════════════════════════
+#
+#  Precompute approach (O(n) space):
+#      max_left  = [0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3]
+#      max_right = [3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 0]
+#      water[i]  = min(max_left[i], max_right[i]) - height[i]
+#
+#  Two pointer approach (O(1) space):
+#      Same result — but instead of storing arrays,
+#      lmax and rmax are computed ON THE FLY as pointers move
+#      Wahi kaam karta hai — bas arrays store nahi karta
+# ══════════════════════════════════════════════════════════════
