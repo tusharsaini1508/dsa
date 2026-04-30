@@ -1,0 +1,243 @@
+# ╔══════════════════════════════════════════════════════════════╗
+# ║         LC 680 — Valid Palindrome II                        ║
+# ║         Full Explanation in Comments — Line by Line         ║
+# ╚══════════════════════════════════════════════════════════════╝
+
+class Solution:
+    def validPalindrome(self, s: str) -> bool:
+
+        # ══════════════════════════════════════════════════════
+        # HELPER FUNCTION — Strict Palindrome Check
+        # ══════════════════════════════════════════════════════
+        #
+        # Yeh function check karta hai ki s[l..r] palindrome hai ya nahi
+        # This checks if the substring from index l to r is a palindrome
+        #
+        # "Strict" matlab — koi deletion allowed nahi andar
+        # "Strict" means — NO deletions allowed inside this check
+        # Kyun? Kyunki hum pehle hi ek deletion use kar chuke hain bahar
+        # Because we already used our ONE allowed deletion outside
+        #
+        def isPalin(l, r):
+
+            # Dono pointers andar ki taraf badhao
+            # Move both pointers inward toward the center
+            while l < r:
+
+                # Agar koi bhi char match nahi kiya → palindrome nahi
+                # If any character doesn't match → not a palindrome
+                if s[l] != s[r]:
+                    return False
+
+                # Dono sides ek-ek step andar aao
+                # Move both pointers one step inward
+                l += 1
+                r -= 1
+
+            # Koi mismatch nahi mila → yeh substring palindrome hai
+            # No mismatch found → this substring is a palindrome
+            return True
+
+
+        # ══════════════════════════════════════════════════════
+        # MAIN LOGIC — Two Pointer Approach
+        # ══════════════════════════════════════════════════════
+
+        # Left pointer string ke shuru mein
+        # Left pointer starts at the beginning of string
+        l = 0
+
+        # Right pointer string ke aakhir mein
+        # Right pointer starts at the end of string
+        r = len(s) - 1
+
+
+        # Jab tak dono pointers mile nahi, loop chalao
+        # Keep looping until both pointers meet in the middle
+        while l < r:
+
+            # ── Match Case ────────────────────────────────────
+            #
+            # Agar dono chars same hain → sab theek hai, aage bado
+            # If both chars match → no problem, move both inward
+            if s[l] == s[r]:
+                l += 1
+                r -= 1
+
+            # ── Mismatch Case ─────────────────────────────────
+            #
+            # s[l] != s[r] → MISMATCH MILA!
+            # s[l] != s[r] → MISMATCH FOUND!
+            #
+            # Abhi hamare paas ek chance hai ek char delete karne ka
+            # We have exactly ONE chance to delete one character
+            #
+            # Do options hain:
+            # Two options to try:
+            #
+            #   Option A: Left char ko skip karo
+            #   Option A: Skip the LEFT character
+            #             → Check if s[l+1 .. r] is a palindrome
+            #
+            #   Option B: Right char ko skip karo
+            #   Option B: Skip the RIGHT character
+            #             → Check if s[l .. r-1] is a palindrome
+            #
+            # Agar dono mein se KOI BHI palindrome hai → True return karo
+            # If EITHER one is a palindrome → return True
+            #
+            # Agar dono fail ho gaye → 2+ deletions chahiye → False
+            # If BOTH fail → we'd need 2+ deletions → return False
+            else:
+                return isPalin(l + 1, r) or isPalin(l, r - 1)
+                #              ───────        ───────────────
+                #              left skip      right skip
+                #              l ko hatao     r ko hatao
+
+        # ── No Mismatch Found ─────────────────────────────────
+        #
+        # Loop poora hua bina kisi mismatch ke
+        # Loop completed without finding any mismatch
+        #
+        # Matlab string pehle se hi palindrome thi (0 deletions needed)
+        # String was already a palindrome (0 deletions needed)
+        return True
+
+
+# ══════════════════════════════════════════════════════════════
+#  VISUAL — How It Works
+# ══════════════════════════════════════════════════════════════
+#
+#  s = "abcca"
+#       ↑   ↑
+#       l   r   →  a == a  ✓  →  l=1, r=3
+#
+#       ↑ ↑
+#       l r     →  b != c  ✗  MISMATCH!
+#
+#  Option A: skip left  → isPalin(2, 3) → s[2..3] = "cc" → c==c ✓ → True
+#  Option B: skip right → isPalin(1, 2) → s[1..2] = "bc" → b!=c ✗ → False
+#
+#  isPalin(2,3) OR isPalin(1,2)  =  True OR False  =  True ✓
+#
+# ──────────────────────────────────────────────────────────────
+#
+#  s = "abcde"
+#       ↑   ↑
+#       l   r   →  a != e  ✗  MISMATCH!
+#
+#  Option A: skip left  → isPalin(1, 4) → s[1..4] = "bcde" → b!=e ✗ → False
+#  Option B: skip right → isPalin(0, 3) → s[0..3] = "abcd" → a!=d ✗ → False
+#
+#  False OR False  =  False ✓
+#
+# ══════════════════════════════════════════════════════════════
+
+
+# ══════════════════════════════════════════════════════════════
+#  WHY isPalin() AND NOT validPalindrome() RECURSIVELY?
+# ══════════════════════════════════════════════════════════════
+#
+#  GALAT (Wrong):
+#  return validPalindrome(s[l+1:r+1]) or validPalindrome(s[l:r])
+#         ────────────────────────────
+#         Yeh phir se ek aur deletion allow karega!
+#         This allows ONE MORE deletion inside — WRONG!
+#         Total deletions = 2 → violates the problem rule
+#
+#  SAHI (Correct):
+#  return isPalin(l+1, r) or isPalin(l, r-1)
+#         ──────────────────────────────────
+#         isPalin is STRICT — zero more deletions allowed
+#         Yeh bilkul strict check hai — aur koi deletion nahi
+#         Total deletions = exactly 1 → correct!
+#
+# ══════════════════════════════════════════════════════════════
+
+
+# ══════════════════════════════════════════════════════════════
+#  DRY RUN — s = "eeabcbaee"
+# ══════════════════════════════════════════════════════════════
+#
+#   l   r  |  s[l]  s[r]  |  result
+#  ─────────────────────────────────────
+#   0   8  |   e      e   |  match ✓ → l=1, r=7
+#   1   7  |   e      e   |  match ✓ → l=2, r=6
+#   2   6  |   a      a   |  match ✓ → l=3, r=5
+#   3   5  |   b      b   |  match ✓ → l=4, r=4
+#   l >= r → loop ends
+#
+#   return True ✓  (already a palindrome, 0 deletions needed)
+#
+# ──────────────────────────────────────────────────────────────
+#
+#  DRY RUN — s = "abca"
+#
+#   l   r  |  s[l]  s[r]  |  result
+#  ─────────────────────────────────────
+#   0   3  |   a      a   |  match ✓ → l=1, r=2
+#   1   2  |   b      c   |  MISMATCH ✗
+#
+#   isPalin(2, 2) → l >= r → True   (skip left 'b')
+#   → return True ✓
+#
+# ══════════════════════════════════════════════════════════════
+
+
+# ══════════════════════════════════════════════════════════════
+#  COMPLEXITY
+# ══════════════════════════════════════════════════════════════
+#
+#  Time  →  O(n)
+#            Main loop  = O(n)  ek baar poori string traverse
+#            isPalin()  = O(n)  worst case ek baar aur traverse
+#            Total      = O(n) + O(n) = O(n)
+#
+#  Space →  O(1)
+#            Sirf pointers use kiye — koi extra array/string nahi
+#            Only pointers used — no extra array or string slicing
+#            (String slicing s[l+1:r] would be O(n) space — avoided)
+#
+# ══════════════════════════════════════════════════════════════
+
+
+# ══════════════════════════════════════════════════════════════
+#  COMMON MISTAKES
+# ══════════════════════════════════════════════════════════════
+#
+#  Mistake 1: Dono skip ek saath try nahi karna
+#  Mistake 1: Not trying BOTH skip options
+#
+#      return isPalin(l+1, r)   ← sirf left skip try kiya
+#                                  only tried skipping left → WRONG
+#
+#      return isPalin(l+1, r) or isPalin(l, r-1)  ← SAHI / CORRECT
+#
+# ──────────────────────────────────────────────────────────────
+#
+#  Mistake 2: Mismatch na mile toh False return karna
+#  Mistake 2: Returning False when no mismatch found
+#
+#      while l < r:
+#          if s[l] != s[r]: return isPalin(...)
+#          l += 1; r -= 1
+#      return False   ← GALAT! No mismatch = already palindrome = True
+#                        WRONG!
+#
+#      return True    ← SAHI / CORRECT
+#
+# ══════════════════════════════════════════════════════════════
+
+
+# ══════════════════════════════════════════════════════════════
+#  ONE LINE TO REMEMBER
+# ══════════════════════════════════════════════════════════════
+#
+#  Pehle mismatch pe → left hatao ya right hatao → dono try karo
+#  At first mismatch → skip left or skip right → try BOTH
+#  Agar dono mein se ek bhi palindrome → True
+#  If either gives a palindrome → True
+#  Dono fail → False
+#  Both fail → False
+#
+# ══════════════════════════════════════════════════════════════
