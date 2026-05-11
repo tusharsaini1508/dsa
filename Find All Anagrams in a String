@@ -1,0 +1,44 @@
+from typing import List
+
+class Solution:
+    def findAnagrams(self, s: str, p: str) -> List[int]:
+        # Yeh list un start indices ko store karegi jahan anagram milega
+        result = []
+        p_len, s_len = len(p), len(s)
+        
+        # Agar pattern p, string s se bada hai toh anagram possible hi nahi
+        if p_len > s_len:
+            return result
+        
+        # 26 size ki arrays frequency counter ki tarah use karenge (dictionary se fast)
+        p_freq = [0] * 26
+        window_freq = [0] * 26
+        
+        # Pattern p ke har character ki frequency count karo
+        for ch in p:
+            p_freq[ord(ch) - ord('a')] += 1
+        
+        # Pehli window (shuru ke p_len characters) ki frequency banao
+        for i in range(p_len):
+            window_freq[ord(s[i]) - ord('a')] += 1
+        
+        # Pehli window check: agar frequency match ho gayi toh index 0 result mein daalo
+        if window_freq == p_freq:
+            result.append(0)
+        
+        # Ab window ko slide karo from index p_len to s_len-1
+        for i in range(p_len, s_len):
+            # Naya character right side se window mein enter ho raha hai
+            new_char_idx = ord(s[i]) - ord('a')
+            window_freq[new_char_idx] += 1
+            
+            # Purana character left side se window se bahar nikal raha hai
+            old_char_idx = ord(s[i - p_len]) - ord('a')
+            window_freq[old_char_idx] -= 1
+            
+            # Agar current window ki frequency pattern se match karti hai,
+            # toh is window ka start index result mein add karo
+            if window_freq == p_freq:
+                result.append(i - p_len + 1)  # Current window ka start index
+        
+        return result
